@@ -2,15 +2,15 @@ import arcpy
 from difflib import SequenceMatcher
 
 # Path to input data sets
-targetPath = r'X:\business\projects\Lake_Connections\Node Maps\CustData_052416\CustomersMay2016.gdb\cancelled_apps_formatted'
+targetPath = r'X:\business\projects\Lake_Connections\Node Maps\CustData_090616\Tables.gdb\master_apps'
 masterPath = r'X:\business\projects\Lake_Connections\Node Maps\CustData_052416\CustomersMay2016.gdb\addresses_all'
 
 # Output csv file path
-outCSVPath = r'X:\business\projects\Lake_Connections\Node Maps\CustData_052416\Join_Tables\cancelled_apps_join.csv'
+outCSVPath = r'X:\business\projects\Lake_Connections\Node Maps\CustData_090616\master_apps_join.csv'
 
 # Set field name variables
 targetUnqFld = "OBJECTID"
-targetJoinFld = "JOIN_CONCAT"
+targetJoinFld = "ADDRESS_CITY"
 masterUnqFld = "OBJECTID"
 masterJoinFld = "JOIN_CONCAT"
 

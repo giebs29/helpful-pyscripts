@@ -111,22 +111,18 @@ def write_csv(data,table_type,out_csv):
 
 
 def main():
-    arcpy.AddMessage(
-    arcpy.GetParameterAsText(0)+
-    arcpy.GetParameterAsText(1)+
-    arcpy.GetParameterAsText(2)+
-    arcpy.GetParameterAsText(3)+
-    arcpy.GetParameterAsText(4)+
-    arcpy.GetParameterAsText(5)+
-    arcpy.GetParameterAsText(6))
+    # arcpy.AddMessage(
+    # arcpy.GetParameterAsText(0)+
+    # arcpy.GetParameterAsText(1)+
+    # arcpy.GetParameterAsText(2)+
+    # arcpy.GetParameterAsText(3)+
+    # arcpy.GetParameterAsText(4))
 
     doc = arcpy.GetParameterAsText(0)
     addr_col_name = arcpy.GetParameterAsText(1)
     city_col_name = arcpy.GetParameterAsText(2)
-    installs = arcpy.GetParameterAsText(3)
-    cancelled = arcpy.GetParameterAsText(4)
-    csr = arcpy.GetParameterAsText(5)
-    out_csv = arcpy.GetParameterAsText(6)
+    table_choices = arcpy.GetParameterAsText(3).split(" ")
+    out_csv = arcpy.GetParameterAsText(4)
 
     # check to make sure the input file is a .xls
     if '.xls' in doc and '.xlsx' not in doc:
@@ -140,22 +136,17 @@ def main():
     sheet = retrieve_sheet(doc)
 
 
-
-    if [installs,cancelled,csr].count('true') != 1:
+    # table_type = 'INSTALL'
+    if table_choices.count('true') != 1:
        arcpy.AddError("Error")
        return
     else:
-         if installs == 'true':
-            table_type = 'INSTALL'
-         if cancelled == 'true':
-            table_type = 'CANCELLED'
-         if csr == 'true':
-            table_type = 'CSR'
+        table_type_list = ['INSTALL','CANCELLED','CSR']
+
+        table_type = table_type_list[table_choices.index('true')]
 
     cell_data = get_cell_data(doc_path,sheet,table_type,addr_col_name,city_col_name)
     write_csv(cell_data,table_type,out_csv)
 
 if __name__ == '__main__':
     main()
-
-
