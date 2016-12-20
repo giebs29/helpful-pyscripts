@@ -89,7 +89,7 @@ def compile_json(baseURL):
     max_id = get_max_id(baseURL)
     cont = True
     if max_id > 1000:
-        print "Greater than 1000 rows"
+        print "Table contains more than 1000 rows"
         break_values = range(0,max_id,1000)
         break_values.append(max_id)
 
@@ -99,7 +99,7 @@ def compile_json(baseURL):
             oid_min = pair[0]
             oid_max = pair[1]
 
-            print "Retrieving feature {}-{}".format(oid_min,oid_max)
+            print "Retrieving features {}-{}".format(oid_min,oid_max)
 
             where = '"{}">{}AND"{}"<={}'.format(oid_field,oid_min,oid_field,oid_max)
             values = {
@@ -117,7 +117,8 @@ def compile_json(baseURL):
 
         return out_json
     else:
-        print "Less than 1000 rows"
+        print "Table contains less than 1000 rows"
+        print "Retrieving features 0-{}".format(oid_max)
         values = {
             'f' : 'json',
             'where' : '1=1',
@@ -125,7 +126,6 @@ def compile_json(baseURL):
             'outFields' : '*',
             'returnGeometry':'true'}
         return get_json(baseURL, values)
-
 
 def pairwise(iterable):
     a, b = tee(iterable)
@@ -136,20 +136,22 @@ def save_json(data,out_path):
     with open(out_path, 'w') as outfile:
         json.dump(data, outfile)
 
+def featureservice_to_json(rest_url,out_dir):
+    token = generate_token()
+    values = {
+        'f' : 'json',
+        'token' : token}
+    data = get_json(rest_url, values)
+    for table in data['layers'] + data['tables']:
+        print('Downloading {} and saving as json'.format(table['name']))
+        url = rest_url + '/' + str(table['id'])
+        data = compile_json(url)
+        json_path = os.path.join(out_dir,table['name']+'.json')
+        save_json(data,json_path)
 
-
-
-token = generate_token()
-values = {
-    'f' : 'json',
-    'returnAttachments' : 'false',
-    'token' : token,
-    'where' : '1=1',
-    'outFields' : '*',
-    'returnGeometry' : 'true'}
-url = 'http://services1.arcgis.com/wqUJgYYL9SHyZZcr/ArcGIS/rest/services/SmartForWeb_NPGSAGO/FeatureServer/4'
-# print get_json(url, values)
-# print get_oid_field(url)
-# print get_max_id(url)
-data = compile_json(url)
-save_json(data, r"C:\Users\Sam\Desktop\loc_vol.json")
+if __name__ == '__main__':
+    url = 'http://services1.arcgis.com/wqUJgYYL9SHyZZcr/ArcGIS/rest/services/SmartForWeb_NPGSAGO/FeatureServer'
+    out_folder = r"C:\Users\samg\Desktop\New folder"
+    featureservice_to_json(
+        rest_url=url,
+        out_dir=out_folder)
