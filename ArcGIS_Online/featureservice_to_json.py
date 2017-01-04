@@ -1,5 +1,24 @@
 import os, urllib, urllib2, datetime, json
 from itertools import tee, izip
+import time
+
+class data_log():
+    def __init__(self,out_path):
+        self.out_path = out_path
+
+    def record(self,data):
+        with open(self.out_path, 'a+') as outfile:
+            outfile.write(data+'\n')
+
+    def start(self):
+        self.record('Start Backup '+ time.strftime("%c"))
+
+    def end(self):
+        self.record('End Backup '+ time.strftime("%c"))
+        self.add_blank_line()
+
+    def add_blank_line(self):
+        self.record('')
 
 ### Generate Token ###
 def generate_token():
@@ -107,7 +126,7 @@ def compile_json(baseURL):
                 'where' : where,
                 'token' : token,
                 'outFields' : '*',
-                'returnGeometry':'false'}
+                'returnGeometry':'true'}
 
             if not out_json:
                 out_json = get_json(baseURL, values)
@@ -115,7 +134,7 @@ def compile_json(baseURL):
             else:
                 out_json['features'] += get_json(baseURL, values)['features']
 
-        return out_json
+        return out_json , max_id
     else:
         print "Table contains less than 1000 rows"
         print "Retrieving features 0-{}".format(oid_max)
@@ -125,7 +144,7 @@ def compile_json(baseURL):
             'token' : token,
             'outFields' : '*',
             'returnGeometry':'true'}
-        return get_json(baseURL, values)
+        return get_json(baseURL, values) , max_id
 
 def pairwise(iterable):
     a, b = tee(iterable)
@@ -142,16 +161,56 @@ def featureservice_to_json(rest_url,out_dir):
         'f' : 'json',
         'token' : token}
     data = get_json(rest_url, values)
-    for table in data['layers'] + data['tables']:
+
+    for layer in data['layers']:
+        print('Downloading {} and saving as json'.format(layer['name']))
+        url = rest_url + '/' + str(layer['id'])
+        json_data , feat_count = compile_json(url)
+        bkup_log.record('    {0} contains {1} features'.format(layer['name'],feat_count))
+        json_data.update({
+            'name' : layer['name'],
+            'type' : 'layer'})
+        json_path = os.path.join(out_dir,layer['name']+'.json')
+        save_json(json_data,json_path)
+
+    for table in data['tables']:
         print('Downloading {} and saving as json'.format(table['name']))
         url = rest_url + '/' + str(table['id'])
-        data = compile_json(url)
+        json_data , feat_count = compile_json(url)
+        bkup_log.record('    {0} contains {1} rows'.format(table['name'],feat_count))
+        json_data.update({
+            'name' : table['name'],
+            'type' : 'table'})
         json_path = os.path.join(out_dir,table['name']+'.json')
-        save_json(data,json_path)
+        save_json(json_data,json_path)
+
+def get_feature_service_info(rest_url):
+        token = generate_token()
+        values = {
+            'f' : 'json',
+            'token' : token}
+        return get_json(rest_url, values)
+
+def log_info(out_path,data):
+  with open(out_path, 'a+') as outfile:
+      outfile.write(data+'\n')
+
+def create_out_dir(base_path):
+    newpath = '{0}\SmartForBackup{1}'.format(base_path,time.strftime("%m%d%y"))
+    if not os.path.exists(newpath):
+        os.makedirs(newpath)
+    return newpath
 
 if __name__ == '__main__':
+
+    bkup_log = data_log(r"C:\Users\samg\Desktop\BLANDIN_JSON\download_log.txt")
+    bkup_log.start()
+
     url = 'http://services1.arcgis.com/wqUJgYYL9SHyZZcr/ArcGIS/rest/services/SmartForWeb_NPGSAGO/FeatureServer'
-    out_folder = r"C:\Users\samg\Desktop\New folder"
+    json_folder = create_out_dir(r"C:\Users\samg\Desktop\BLANDIN_JSON")
+
     featureservice_to_json(
         rest_url=url,
-        out_dir=out_folder)
+        out_dir=json_folder)
+
+    bkup_log.end()
