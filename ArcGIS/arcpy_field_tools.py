@@ -1,8 +1,5 @@
 import arcpy
 
-ts_fc = r'C:\Users\samg\Documents\MyRepos\rcra_script\rcra_boundaries.gdb\Timber_Sales'
-hv_table = r'C:\Users\samg\Documents\MyRepos\rcra_script\rcra_boundaries.gdb\HARVEST'
-
 def list_empty_fields(table):
     empty_fields = []
     fields = [str(i.name) for i in arcpy.ListFields(table)]
@@ -12,9 +9,6 @@ def list_empty_fields(table):
             empty_fields.append(field)
 
     return empty_fields
-
-print 'Timber Sale', list_empty_fields(ts_fc)
-print 'Harvest', list_empty_fields(hv_table)
 
 def empty_select_fields(table, fields_save=False):
 
@@ -31,5 +25,4 @@ def empty_select_fields(table, fields_save=False):
                 return
 
 
-# Timber Sale ['range', 'manageObj', 'soilProtect', 'countyText', 'state', 'type']
-# Harvest ['regenMethod', 'startDate', 'endDate', 'contractNumber', 'comments', 'harvestSystem', 'relGUID', 'status']
+print list_empty_fields('')

@@ -113,9 +113,9 @@ def main(gdb,json_path):
 
 
 # process_fields(data)
-gdb = r'C:\Users\samg\Desktop\New folder\json_test.gdb'
+gdb = ""
 arcpy.env.workspace = gdb
 
-json_file = r"C:\Users\samg\Desktop\New folder\RELEASE_SITEPREP.json"
+json_file = ""
 # print open_json(json_file)
 main(gdb,json_file)

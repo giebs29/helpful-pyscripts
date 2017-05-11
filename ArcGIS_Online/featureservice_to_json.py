@@ -23,8 +23,8 @@ class data_log():
 ### Generate Token ###
 def generate_token():
     gtUrl = 'https://www.arcgis.com/sharing/rest/generateToken'
-    gtValues = {'username' : 'samg_npgs2',
-    'password' : 'june82013',
+    gtValues = {'username' : "",
+    'password' : "",
     'referer' : 'http://www.arcgis.com',
     'f' : 'json' }
     gtData = urllib.urlencode(gtValues)
@@ -203,11 +203,11 @@ def create_out_dir(base_path):
 
 if __name__ == '__main__':
 
-    bkup_log = data_log(r"C:\Users\samg\Desktop\BLANDIN_JSON\download_log.txt")
+    bkup_log = data_log("")
     bkup_log.start()
 
-    url = 'http://services1.arcgis.com/wqUJgYYL9SHyZZcr/ArcGIS/rest/services/SmartForWeb_NPGSAGO/FeatureServer'
-    json_folder = create_out_dir(r"C:\Users\samg\Desktop\BLANDIN_JSON")
+    url = ''
+    json_folder = create_out_dir("")
 
     featureservice_to_json(
         rest_url=url,

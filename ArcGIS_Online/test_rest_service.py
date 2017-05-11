@@ -25,5 +25,5 @@ def build_request(base_url,query_param_dict):
     return base_url + query_str
 
 if __name__ == '__main__':
-    print(test_rest('https://watersgeo.epa.gov/arcgis/rest/services/OWRAD_NP21/STORET_NP21/MapServer/0'))
-    print(test_rest('https://map22.epa.gov/arcgis/rest/services/cimc/Cleanups/MapServer'))
+    rest_url = ""
+    print(test_rest(rest_url))

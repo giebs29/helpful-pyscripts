@@ -2,17 +2,17 @@ import arcpy
 from difflib import SequenceMatcher
 
 # Path to input data sets
-targetPath = r'X:\business\projects\Lake_Connections\Node Maps\CustData_090616\Tables.gdb\master_apps'
-masterPath = r'X:\business\projects\Lake_Connections\Node Maps\CustData_052416\CustomersMay2016.gdb\addresses_all'
+targetPath = ""
+masterPath = ""
 
 # Output csv file path
-outCSVPath = r'X:\business\projects\Lake_Connections\Node Maps\CustData_090616\master_apps_join.csv'
+outCSVPath = ""
 
 # Set field name variables
-targetUnqFld = "OBJECTID"
-targetJoinFld = "ADDRESS_CITY"
-masterUnqFld = "OBJECTID"
-masterJoinFld = "JOIN_CONCAT"
+targetUnqFld = ""
+targetJoinFld = ""
+masterUnqFld = ""
+masterJoinFld = ""
 
 # Retrive table data as list of rows
 target = [i for i in arcpy.da.SearchCursor(targetPath,[targetUnqFld,targetJoinFld])]

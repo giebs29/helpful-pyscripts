@@ -2,7 +2,6 @@ import os
 from os import path
 import csv
 import re
-import arcpy
 
 
 
@@ -10,22 +9,13 @@ def countPages(filename):
     pdfDoc = arcpy.mapping.PDFDocumentOpen(filename)
     return pdfDoc.pageCount
 
+directory = ""
+out_csv = ""
+file_type = ".pdf"
 
-with open("PDF_List.txt", "w") as csvfile:
-    writer = csv.writer(csvfile,delimiter='$')
-    for path, subdirs, files in os.walk(r'X:\business\projects\Lake_Connections\Redlines\Redline_PDFs'):
+with open(out_csv, "w") as csvfile:
+    writer = csv.writer(csvfile)
+    for path, subdirs, files in os.walk(directory):
        for filename in files:
-           if '.pdf' in filename:
-              if 'COMBINED' not in filename.upper():
-                  f = os.path.join(path, filename)
-                  try:
-                      pages = countPages(f)
-                      print filename,pages
-                  except:
-                         print filename,'Cannot open'
-                         pages = 'NA'
-
-                  writer.writerow([path] + [filename] + [pages])
-
-
-print('complete')
+           if file_type in filename:
+                  writer.writerow(os.path.join(path, filename))
